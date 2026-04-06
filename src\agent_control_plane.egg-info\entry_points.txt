@@ -1,2 +1,0 @@
-[console_scripts]
-agent-control-plane = agent_control_plane.cli:main
