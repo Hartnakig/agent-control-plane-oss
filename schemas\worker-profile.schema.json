@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Worker Profile",
+  "type": "object",
+  "required": [
+    "worker_id",
+    "alias",
+    "assistant_code",
+    "assistant_level",
+    "project_root",
+    "agent_root"
+  ],
+  "properties": {
+    "worker_id": {
+      "type": "string"
+    },
+    "id": {
+      "type": "string"
+    },
+    "alias": {
+      "type": "string"
+    },
+    "assistant_code": {
+      "type": "string"
+    },
+    "assistant_level": {
+      "type": "string",
+      "enum": ["A", "S", "B", "C", "D"]
+    },
+    "window_title": {
+      "type": "string"
+    },
+    "project_root": {
+      "type": "string"
+    },
+    "agent_root": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string"
+    },
+    "scope": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "supervisor_worker_id": {
+      "type": "string"
+    },
+    "supervisor_assistant_code": {
+      "type": "string"
+    },
+    "staffing_standard_path": {
+      "type": "string"
+    },
+    "communication_standard_path": {
+      "type": "string"
+    },
+    "profile_standard_path": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": true
+}

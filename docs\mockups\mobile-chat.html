@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Agent Control Plane Mobile Chat</title>
+  <link rel="stylesheet" href="./common.css">
+  <style>
+    body {
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .mobile-stage {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(circle at 15% 18%, rgba(47, 109, 246, 0.24), transparent 30%),
+        radial-gradient(circle at 80% 78%, rgba(15, 159, 143, 0.2), transparent 30%),
+        linear-gradient(180deg, #f3f7fd 0%, #dfe8f5 100%);
+    }
+
+    .mobile-stage::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.12) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.12) 1px, transparent 1px);
+      background-size: 52px 52px;
+      mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.42), transparent 70%);
+      pointer-events: none;
+    }
+
+    .phone-wrap {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 350px 332px;
+      gap: 34px;
+      align-items: center;
+    }
+
+    .phone-frame {
+      width: 350px;
+      height: 720px;
+      padding: 14px;
+      border-radius: 44px;
+      background: linear-gradient(180deg, #0f172a, #111f37);
+      box-shadow: 0 34px 86px rgba(17, 31, 56, 0.28);
+    }
+
+    .phone-screen {
+      width: 100%;
+      height: 100%;
+      border-radius: 32px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: linear-gradient(180deg, #f9fbfe, #eef4fb);
+      display: grid;
+      grid-template-rows: auto auto auto 1fr auto auto;
+    }
+
+    .phone-notch {
+      width: 126px;
+      height: 24px;
+      margin: 12px auto 4px;
+      border-radius: 999px;
+      background: rgba(7, 13, 24, 0.9);
+    }
+
+    .status-strip {
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .phone-header {
+      padding: 16px 20px 14px;
+    }
+
+    .phone-header h1 {
+      margin: 0;
+      font-size: 25px;
+      letter-spacing: -0.05em;
+    }
+
+    .phone-header p {
+      margin: 8px 0 0;
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--muted);
+    }
+
+    .summary-card {
+      margin: 0 18px 14px;
+      padding: 14px;
+      border-radius: 22px;
+      border: 1px solid rgba(255, 255, 255, 0.72);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(241, 246, 255, 0.9));
+      box-shadow: 0 18px 28px rgba(17, 31, 56, 0.08);
+    }
+
+    .summary-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .summary-title {
+      font-size: 14px;
+      font-weight: 720;
+    }
+
+    .summary-subtitle {
+      margin-top: 6px;
+      font-size: 12px;
+      line-height: 1.5;
+      color: var(--muted);
+    }
+
+    .summary-metrics {
+      margin-top: 12px;
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .summary-metric {
+      padding: 10px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.84);
+      border: 1px solid var(--line);
+      text-align: center;
+    }
+
+    .summary-metric strong {
+      display: block;
+      font-size: 20px;
+      letter-spacing: -0.04em;
+    }
+
+    .summary-metric span {
+      display: block;
+      margin-top: 4px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .mobile-messages {
+      padding: 0 18px 18px;
+      display: grid;
+      gap: 14px;
+      align-content: start;
+    }
+
+    .mobile-bubble {
+      max-width: 92%;
+      padding: 14px 14px 13px;
+      border-radius: 20px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 12px 24px rgba(17, 31, 56, 0.07);
+    }
+
+    .mobile-bubble.operator {
+      justify-self: start;
+      border-top-left-radius: 8px;
+    }
+
+    .mobile-bubble.agent {
+      justify-self: end;
+      border-top-right-radius: 8px;
+      background: linear-gradient(180deg, rgba(220, 251, 245, 0.98), rgba(235, 244, 255, 0.96));
+    }
+
+    .mobile-bubble h3 {
+      margin: 0;
+      font-size: 13px;
+      font-weight: 720;
+    }
+
+    .mobile-bubble p {
+      margin: 7px 0 0;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .mobile-bubble ul {
+      margin: 8px 0 0 18px;
+      padding: 0;
+    }
+
+    .mobile-bubble li {
+      margin: 6px 0;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .quick-row {
+      margin: 0 18px 14px;
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .quick-chip {
+      min-height: 42px;
+      padding: 0 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.82);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .mobile-composer {
+      padding: 0 18px 14px;
+    }
+
+    .mobile-composer-box {
+      min-height: 56px;
+      padding: 0 12px 0 16px;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.82);
+      background: rgba(255, 255, 255, 0.94);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--muted);
+      box-shadow: 0 14px 22px rgba(17, 31, 56, 0.06);
+    }
+
+    .mobile-send {
+      width: 40px;
+      height: 40px;
+      border-radius: 14px;
+      border: none;
+      color: white;
+      background: linear-gradient(135deg, #0f9f8f, #2f6df6);
+      font-weight: 700;
+      box-shadow: 0 10px 20px rgba(47, 109, 246, 0.22);
+    }
+
+    .bottom-nav {
+      padding: 0 18px 16px;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .bottom-item {
+      min-height: 52px;
+      padding-top: 8px;
+      display: grid;
+      justify-items: center;
+      align-content: center;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid var(--line);
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .bottom-item.active {
+      color: var(--text);
+      background: rgba(223, 232, 255, 0.84);
+    }
+
+    .bottom-item strong {
+      font-size: 12px;
+      margin-bottom: 4px;
+    }
+
+    .callouts {
+      display: grid;
+      gap: 16px;
+    }
+
+    .callout {
+      padding: 18px;
+      border-radius: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.74);
+      background: rgba(255, 255, 255, 0.8);
+      box-shadow: 0 18px 30px rgba(17, 31, 56, 0.08);
+    }
+
+    .callout h2 {
+      margin: 8px 0 0;
+      font-size: 21px;
+      line-height: 1.15;
+      letter-spacing: -0.04em;
+    }
+
+    .callout p {
+      margin: 8px 0 0;
+      font-size: 14px;
+      line-height: 1.58;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="mobile-stage">
+    <div class="phone-wrap">
+      <div class="phone-frame">
+        <div class="phone-screen">
+          <div class="phone-notch"></div>
+          <div class="status-strip">
+            <span>9:41</span>
+            <span>5G 100%</span>
+          </div>
+
+          <div class="phone-header">
+            <div class="label"><span class="dot teal"></span>Remote control</div>
+            <h1>Mobile Ops Chat</h1>
+            <p>Approve work, inspect memory health, and keep the same agent state synced while you are away from the desktop console.</p>
+          </div>
+
+          <div class="summary-card">
+            <div class="summary-top">
+              <div>
+                <div class="summary-title">Cross-device sync is healthy</div>
+                <div class="summary-subtitle">Desktop dashboard, desktop chat, and mobile review are all reading from the same durable control plane.</div>
+              </div>
+              <div class="badge-soft teal">Live</div>
+            </div>
+            <div class="summary-metrics">
+              <div class="summary-metric"><strong>12</strong><span>workers</span></div>
+              <div class="summary-metric"><strong>98%</strong><span>memory</span></div>
+              <div class="summary-metric"><strong>31</strong><span>snapshots</span></div>
+            </div>
+          </div>
+
+          <div class="mobile-messages">
+            <div class="mobile-bubble operator">
+              <h3>Controller</h3>
+              <p>Before I approve the next handoff, show me the latest team status and tell me whether memory health is still safe.</p>
+            </div>
+
+            <div class="mobile-bubble agent">
+              <h3>profile-manager</h3>
+              <p>Registry is healthy and the same state is synced from desktop. Two workers still need a memory refresh review.</p>
+              <ul>
+                <li>31 portable snapshots are ready for recovery.</li>
+                <li>3 approvals remain paused until review completes.</li>
+                <li>The same alerts are visible in desktop chat and dashboard.</li>
+              </ul>
+            </div>
+
+            <div class="mobile-bubble operator">
+              <h3>Controller</h3>
+              <p>Queue the review, keep approvals paused, and let me reopen the memory panel when I get back to desktop.</p>
+            </div>
+
+            <div class="mobile-bubble agent">
+              <h3>ops-manager</h3>
+              <p>Done. The review is queued, approvals remain paused, and the state will be waiting for you on every synced surface.</p>
+            </div>
+          </div>
+
+          <div class="quick-row">
+            <div class="quick-chip">Review memory</div>
+            <div class="quick-chip">Approve handoff</div>
+            <div class="quick-chip">Open dashboard</div>
+          </div>
+
+          <div class="mobile-composer">
+            <div class="mobile-composer-box">
+              Message the control plane...
+              <button class="mobile-send">+</button>
+            </div>
+          </div>
+
+          <div class="bottom-nav">
+            <div class="bottom-item"><strong>Ops</strong>Status</div>
+            <div class="bottom-item active"><strong>Chat</strong>Remote</div>
+            <div class="bottom-item"><strong>Memory</strong>Review</div>
+            <div class="bottom-item"><strong>Sync</strong>Devices</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callouts">
+        <div class="callout">
+          <div class="label"><span class="dot blue"></span>Multi-device sync</div>
+          <h2>Remote control without losing context</h2>
+          <p>The mobile surface reads the same durable worker state as the desktop dashboard, so approvals and reviews stay grounded in real coordination data.</p>
+        </div>
+
+        <div class="callout">
+          <div class="label"><span class="dot teal"></span>Evolvable memory</div>
+          <h2>Memory follows you across surfaces</h2>
+          <p>Session context, governance rules, and snapshot bundles remain visible on phone and desktop, which makes remote communication safe instead of guesswork.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

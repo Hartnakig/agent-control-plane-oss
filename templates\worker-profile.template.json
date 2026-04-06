@@ -1,0 +1,16 @@
+{
+  "worker_id": "worker-replace-me",
+  "alias": "Replace Me",
+  "assistant_code": "B_replace_me",
+  "assistant_level": "B",
+  "window_title": "Replace Me",
+  "project_root": "..",
+  "agent_root": ".",
+  "status": "registered",
+  "scope": [
+    "Describe the worker scope here"
+  ],
+  "staffing_standard_path": "../../../docs/governance.md",
+  "communication_standard_path": "../../../coordination/README.md",
+  "profile_standard_path": "../../../docs/worker-profile.md"
+}

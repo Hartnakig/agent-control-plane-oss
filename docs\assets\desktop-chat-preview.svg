@@ -1,0 +1,86 @@
+<svg width="1280" height="760" viewBox="0 0 1280 760" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="96" y1="54" x2="1184" y2="704" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#08111F"/>
+      <stop offset="1" stop-color="#111B32"/>
+    </linearGradient>
+    <linearGradient id="mint" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#5EEAD4"/>
+      <stop offset="1" stop-color="#34D399"/>
+    </linearGradient>
+    <linearGradient id="sky" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#60A5FA"/>
+      <stop offset="1" stop-color="#38BDF8"/>
+    </linearGradient>
+    <filter id="shadow" x="-40" y="-40" width="1360" height="840" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="26" stdDeviation="24" flood-color="#040814" flood-opacity="0.54"/>
+    </filter>
+  </defs>
+
+  <rect width="1280" height="760" rx="32" fill="#07101C"/>
+  <g filter="url(#shadow)">
+    <rect x="48" y="40" width="1184" height="680" rx="30" fill="url(#bg)"/>
+  </g>
+
+  <rect x="82" y="84" width="254" height="592" rx="24" fill="#0E172A"/>
+  <text x="118" y="126" fill="#F8FAFC" font-size="28" font-family="Segoe UI, Arial, sans-serif" font-weight="700">Operator Chat</text>
+  <text x="118" y="154" fill="#94A3B8" font-size="15" font-family="Segoe UI, Arial, sans-serif">Desktop controller thread with live worker context</text>
+
+  <rect x="108" y="198" width="202" height="62" rx="18" fill="#15213A"/>
+  <circle cx="138" cy="229" r="10" fill="#34D399"/>
+  <text x="160" y="224" fill="#F8FAFC" font-size="16" font-family="Segoe UI, Arial, sans-serif" font-weight="700">profile-manager</text>
+  <text x="160" y="246" fill="#94A3B8" font-size="13" font-family="Segoe UI, Arial, sans-serif">memory review queue: 2</text>
+
+  <rect x="108" y="278" width="202" height="62" rx="18" fill="#15213A"/>
+  <circle cx="138" cy="309" r="10" fill="#60A5FA"/>
+  <text x="160" y="304" fill="#F8FAFC" font-size="16" font-family="Segoe UI, Arial, sans-serif" font-weight="700">ops-manager</text>
+  <text x="160" y="326" fill="#94A3B8" font-size="13" font-family="Segoe UI, Arial, sans-serif">handoff approvals: 3</text>
+
+  <rect x="108" y="358" width="202" height="62" rx="18" fill="#15213A"/>
+  <circle cx="138" cy="389" r="10" fill="#F59E0B"/>
+  <text x="160" y="384" fill="#F8FAFC" font-size="16" font-family="Segoe UI, Arial, sans-serif" font-weight="700">worker-a</text>
+  <text x="160" y="406" fill="#94A3B8" font-size="13" font-family="Segoe UI, Arial, sans-serif">awaiting task handoff</text>
+
+  <text x="118" y="480" fill="#F8FAFC" font-size="18" font-family="Segoe UI, Arial, sans-serif" font-weight="700">Signals</text>
+  <rect x="108" y="502" width="202" height="16" rx="8" fill="#15213A"/>
+  <rect x="108" y="502" width="166" height="16" rx="8" fill="url(#mint)"/>
+  <text x="108" y="542" fill="#94A3B8" font-size="13" font-family="Segoe UI, Arial, sans-serif">Memory retention coverage</text>
+
+  <rect x="366" y="84" width="832" height="592" rx="24" fill="#0E172A"/>
+  <text x="404" y="126" fill="#F8FAFC" font-size="32" font-family="Segoe UI, Arial, sans-serif" font-weight="700">Controller Workspace</text>
+  <text x="404" y="156" fill="#94A3B8" font-size="16" font-family="Segoe UI, Arial, sans-serif">A desktop chat layer on top of registry, memory, and worker status files</text>
+
+  <rect x="404" y="196" width="312" height="74" rx="22" fill="#131F36"/>
+  <text x="432" y="226" fill="#F8FAFC" font-size="17" font-family="Segoe UI, Arial, sans-serif" font-weight="700">Controller</text>
+  <text x="432" y="250" fill="#CBD5E1" font-size="15" font-family="Segoe UI, Arial, sans-serif">Need an overview of memory risk and active queues.</text>
+
+  <rect x="548" y="292" width="432" height="122" rx="26" fill="url(#mint)"/>
+  <text x="580" y="328" fill="#062C25" font-size="18" font-family="Segoe UI, Arial, sans-serif" font-weight="700">profile-manager</text>
+  <text x="580" y="354" fill="#083730" font-size="15" font-family="Segoe UI, Arial, sans-serif">12 workers active across local and project scopes.</text>
+  <text x="580" y="380" fill="#083730" font-size="15" font-family="Segoe UI, Arial, sans-serif">2 workers need memory refresh review.</text>
+  <text x="580" y="406" fill="#083730" font-size="15" font-family="Segoe UI, Arial, sans-serif">31 snapshots verified for recovery coverage.</text>
+
+  <rect x="404" y="438" width="356" height="74" rx="22" fill="#131F36"/>
+  <text x="432" y="468" fill="#F8FAFC" font-size="17" font-family="Segoe UI, Arial, sans-serif" font-weight="700">Controller</text>
+  <text x="432" y="492" fill="#CBD5E1" font-size="15" font-family="Segoe UI, Arial, sans-serif">Open the memory panel and queue the pending handoff.</text>
+
+  <rect x="548" y="534" width="432" height="100" rx="26" fill="url(#sky)"/>
+  <text x="580" y="570" fill="#F8FAFC" font-size="18" font-family="Segoe UI, Arial, sans-serif" font-weight="700">Ops view</text>
+  <text x="580" y="596" fill="#E0F2FE" font-size="15" font-family="Segoe UI, Arial, sans-serif">Memory alerts: 2</text>
+  <text x="770" y="596" fill="#E0F2FE" font-size="15" font-family="Segoe UI, Arial, sans-serif">Pending approvals: 3</text>
+  <text x="580" y="620" fill="#E0F2FE" font-size="15" font-family="Segoe UI, Arial, sans-serif">Queue state synced to durable files</text>
+
+  <rect x="1032" y="214" width="124" height="132" rx="20" fill="#101B31"/>
+  <text x="1058" y="248" fill="#F8FAFC" font-size="16" font-family="Segoe UI, Arial, sans-serif" font-weight="700">Memory</text>
+  <text x="1058" y="272" fill="#94A3B8" font-size="12" font-family="Segoe UI, Arial, sans-serif">session + snapshots</text>
+  <rect x="1058" y="292" width="72" height="10" rx="5" fill="url(#mint)"/>
+  <rect x="1058" y="314" width="58" height="10" rx="5" fill="#1E293B"/>
+
+  <rect x="1032" y="366" width="124" height="132" rx="20" fill="#101B31"/>
+  <text x="1058" y="400" fill="#F8FAFC" font-size="16" font-family="Segoe UI, Arial, sans-serif" font-weight="700">Queue</text>
+  <text x="1058" y="424" fill="#94A3B8" font-size="12" font-family="Segoe UI, Arial, sans-serif">handoffs + tasks</text>
+  <rect x="1058" y="444" width="80" height="10" rx="5" fill="url(#sky)"/>
+  <rect x="1058" y="466" width="48" height="10" rx="5" fill="#1E293B"/>
+  <rect x="1058" y="624" width="104" height="18" rx="9" fill="#13253E"/>
+  <text x="1068" y="637" fill="#93C5FD" font-size="11" font-family="Segoe UI, Arial, sans-serif" font-weight="700">Desktop chat preview</text>
+</svg>

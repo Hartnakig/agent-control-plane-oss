@@ -1,0 +1,9 @@
+generated_from = "worker-profile.json"
+generated_at = "2026-04-06 20:37:05"
+
+[worker]
+id = "worker-a"
+alias = "Worker A"
+assistant_code = "D_worker_a"
+assistant_level = "D"
+window_title = "Worker A"

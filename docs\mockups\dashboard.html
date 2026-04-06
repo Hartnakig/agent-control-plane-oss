@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Agent Control Plane Dashboard</title>
+  <link rel="stylesheet" href="./common.css">
+  <style>
+    .dashboard-layout {
+      display: grid;
+      grid-template-columns: 258px minmax(0, 1fr);
+      min-height: 702px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .sidebar {
+      padding: 24px 18px;
+      border-right: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(247, 250, 255, 0.84), rgba(233, 239, 248, 0.96));
+    }
+
+    .workspace-card {
+      padding: 18px;
+      border-radius: 22px;
+      border: 1px solid rgba(255, 255, 255, 0.72);
+      background: rgba(255, 255, 255, 0.8);
+      box-shadow: 0 14px 32px rgba(17, 31, 56, 0.06);
+    }
+
+    .workspace-card h2 {
+      margin: 10px 0 0;
+      font-size: 18px;
+      font-weight: 740;
+      letter-spacing: -0.03em;
+    }
+
+    .workspace-card p {
+      margin: 6px 0 0;
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--muted);
+    }
+
+    .nav-group {
+      margin-top: 18px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .nav-item {
+      min-height: 54px;
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-radius: 18px;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 650;
+      background: transparent;
+    }
+
+    .nav-item.active {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.88);
+      box-shadow: 0 12px 26px rgba(17, 31, 56, 0.08);
+    }
+
+    .nav-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: rgba(47, 109, 246, 0.1);
+      color: var(--blue);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+    }
+
+    .sync-card {
+      margin-top: 22px;
+      padding: 18px;
+      border-radius: 24px;
+      background: linear-gradient(180deg, #10203a, #153a73);
+      color: white;
+      box-shadow: 0 20px 36px rgba(17, 31, 56, 0.22);
+    }
+
+    .sync-card h3 {
+      margin: 10px 0 0;
+      font-size: 22px;
+      line-height: 1.2;
+      letter-spacing: -0.04em;
+    }
+
+    .sync-card p {
+      margin: 10px 0 0;
+      font-size: 13px;
+      line-height: 1.55;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .main {
+      padding: 24px;
+      display: grid;
+      gap: 18px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(242, 247, 253, 0.68));
+    }
+
+    .hero {
+      padding: 26px;
+      display: grid;
+      gap: 24px;
+      grid-template-columns: minmax(0, 1.3fr) minmax(330px, 0.8fr);
+    }
+
+    .hero-copy h2 {
+      margin: 0;
+      font-size: 38px;
+      line-height: 1.05;
+      letter-spacing: -0.06em;
+    }
+
+    .hero-copy p {
+      margin: 14px 0 0;
+      max-width: 720px;
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--muted);
+    }
+
+    .hero-points {
+      margin-top: 18px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .hero-point {
+      min-height: 42px;
+      padding: 0 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.76);
+      border: 1px solid var(--line);
+      font-size: 14px;
+      font-weight: 650;
+    }
+
+    .hero-meta {
+      display: grid;
+      gap: 12px;
+      align-content: start;
+    }
+
+    .hero-panel {
+      padding: 18px;
+      border-radius: 22px;
+      border: 1px solid rgba(255, 255, 255, 0.78);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(245, 249, 255, 0.9));
+      box-shadow: 0 18px 32px rgba(17, 31, 56, 0.06);
+    }
+
+    .hero-panel h3 {
+      margin: 10px 0 0;
+      font-size: 18px;
+      letter-spacing: -0.03em;
+    }
+
+    .hero-panel p {
+      margin: 8px 0 0;
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--muted);
+    }
+
+    .sync-map {
+      margin-top: 14px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .sync-node {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      min-height: 48px;
+      padding: 0 14px;
+      border-radius: 16px;
+      background: rgba(240, 245, 255, 0.92);
+      border: 1px solid rgba(47, 109, 246, 0.08);
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .sync-node strong {
+      color: var(--text);
+    }
+
+    .content-grid {
+      display: grid;
+      gap: 18px;
+      grid-template-columns: minmax(0, 1.45fr) minmax(360px, 0.92fr);
+    }
+
+    .panel {
+      padding: 22px;
+    }
+
+    .memory-list,
+    .activity-list,
+    .worker-list {
+      margin-top: 18px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .memory-row,
+    .activity-row,
+    .worker-row {
+      padding: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.74);
+    }
+
+    .memory-meta,
+    .activity-meta,
+    .worker-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .memory-row h3,
+    .activity-row h3,
+    .worker-row h3 {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 720;
+    }
+
+    .memory-row p,
+    .activity-row p,
+    .worker-row p {
+      margin: 4px 0 0;
+      font-size: 13px;
+      line-height: 1.45;
+      color: var(--muted);
+    }
+
+    .health-chart {
+      margin-top: 18px;
+      padding: 18px;
+      border-radius: 22px;
+      background: linear-gradient(180deg, rgba(240, 245, 255, 0.82), rgba(255, 255, 255, 0.86));
+      border: 1px solid var(--line);
+    }
+
+    .chart-line {
+      position: relative;
+      height: 156px;
+      margin-top: 18px;
+      border-radius: 18px;
+      background:
+        linear-gradient(rgba(21, 40, 68, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(21, 40, 68, 0.04) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(47, 109, 246, 0.06), rgba(47, 109, 246, 0));
+      background-size: 100% 39px, 60px 100%, 100% 100%;
+      overflow: hidden;
+    }
+
+    .chart-line svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .chart-labels {
+      margin-top: 10px;
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      font-size: 12px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .worker-list {
+      gap: 14px;
+    }
+
+    .worker-row {
+      align-items: flex-start;
+    }
+
+    .worker-status {
+      display: grid;
+      gap: 8px;
+      justify-items: end;
+    }
+
+    .worker-tag {
+      min-height: 28px;
+      padding: 0 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      background: rgba(47, 109, 246, 0.08);
+    }
+
+    .activity-row {
+      align-items: flex-start;
+    }
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <div class="app-shell">
+      <div class="topbar">
+        <div class="brand">
+          <div class="brand-badge">ACP</div>
+          <div>
+            <h1 class="brand-title">Agent Control Plane</h1>
+            <p class="brand-subtitle">Operations dashboard for multi-agent teams, memory evolution, and cross-device sync</p>
+          </div>
+        </div>
+        <div class="toolbar">
+          <div class="pill"><strong>12</strong> active workers</div>
+          <div class="pill"><strong>31</strong> synced snapshots</div>
+          <button class="button-secondary">Export audit bundle</button>
+          <button class="button-primary">Review memory alerts</button>
+        </div>
+      </div>
+
+      <div class="dashboard-layout">
+        <aside class="sidebar">
+          <div class="workspace-card">
+            <div class="label"><span class="dot teal"></span>Workspace online</div>
+            <h2>Controller Console</h2>
+            <p>One file-based control layer coordinating every worker, queue, memory update, and recovery snapshot.</p>
+          </div>
+
+          <div class="nav-group">
+            <div class="nav-item active"><div class="nav-icon">OV</div>Overview</div>
+            <div class="nav-item"><div class="nav-icon">TM</div>Teams</div>
+            <div class="nav-item"><div class="nav-icon">MM</div>Memory</div>
+            <div class="nav-item"><div class="nav-icon">SY</div>Sync</div>
+            <div class="nav-item"><div class="nav-icon">AU</div>Audit</div>
+          </div>
+
+          <div class="sync-card">
+            <div class="label" style="color: rgba(255,255,255,0.82);"><span class="dot" style="background:#86efac;"></span>Multi-device sync</div>
+            <h3>Desktop and mobile stay in step</h3>
+            <p>Controller decisions, memory refreshes, and worker queue changes land in the same durable file graph across every surface.</p>
+          </div>
+        </aside>
+
+        <main class="main">
+          <section class="card hero">
+            <div class="hero-copy">
+              <p class="eyebrow">Product overview</p>
+              <h2>Run a real multi-agent team, not a pile of disconnected chat tabs.</h2>
+              <p>Agent Control Plane turns worker coordination into a first-class product surface: team management, evolvable memory, and cross-device communication all anchored to inspectable files.</p>
+
+              <div class="hero-points">
+                <div class="hero-point"><span class="dot teal"></span>Multi-agent team management with worker identities, queues, and approvals</div>
+                <div class="hero-point"><span class="dot blue"></span>Evolvable memory system built from session files, rules, and snapshots</div>
+                <div class="hero-point"><span class="dot amber"></span>Desktop and mobile sync for remote control, handoffs, and review</div>
+              </div>
+            </div>
+
+            <div class="hero-meta">
+              <div class="hero-panel">
+                <div class="label"><span class="dot blue"></span>Sync topology</div>
+                <h3>Same state across every device</h3>
+                <p>Registry writes, memory updates, and approvals flow into the same durable layer instead of fragmenting across tools.</p>
+                <div class="sync-map">
+                  <div class="sync-node"><strong>Desktop dashboard</strong><span>Healthy</span></div>
+                  <div class="sync-node"><strong>Desktop operator chat</strong><span>Live queues</span></div>
+                  <div class="sync-node"><strong>Mobile control chat</strong><span>Remote review</span></div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="metric-grid">
+            <div class="metric-card">
+              <div class="badge-soft teal">Team ops</div>
+              <div class="metric-value">12</div>
+              <div class="metric-note">Workers currently coordinated across local and project scopes</div>
+            </div>
+            <div class="metric-card">
+              <div class="badge-soft blue">Memory</div>
+              <div class="metric-value">98%</div>
+              <div class="metric-note">Healthy retention coverage across current session and snapshot layers</div>
+            </div>
+            <div class="metric-card">
+              <div class="badge-soft amber">Approvals</div>
+              <div class="metric-value">4</div>
+              <div class="metric-note">Handoffs and task reviews waiting for controller confirmation</div>
+            </div>
+            <div class="metric-card">
+              <div class="badge-soft rose">Remote</div>
+              <div class="metric-value">3</div>
+              <div class="metric-note">Connected surfaces receiving synced updates right now</div>
+            </div>
+          </section>
+
+          <section class="content-grid">
+            <section class="card panel">
+              <div class="card-header">
+                <div>
+                  <p class="eyebrow">Evolvable memory</p>
+                  <h2 class="card-title">Memory management that gets richer over time</h2>
+                  <p class="card-subtitle">Track living session context, durable governance material, and portable recovery bundles in one place.</p>
+                </div>
+                <div class="badge-soft blue">98% healthy</div>
+              </div>
+
+              <div class="memory-list">
+                <div class="memory-row">
+                  <div class="memory-meta">
+                    <div class="avatar teal">SM</div>
+                    <div>
+                      <h3>session_memory.md</h3>
+                      <p>Fresh operator decisions, handoff context, and current working constraints</p>
+                    </div>
+                  </div>
+                  <div style="width: 220px;">
+                    <p class="kicker">Coverage</p>
+                    <div class="progress"><span style="width: 94%;"></span></div>
+                  </div>
+                </div>
+
+                <div class="memory-row">
+                  <div class="memory-meta">
+                    <div class="avatar blue">AP</div>
+                    <div>
+                      <h3>_agent_profile/</h3>
+                      <p>Portable snapshots that preserve worker identity, rules, and recovery state</p>
+                    </div>
+                  </div>
+                  <div style="width: 220px;">
+                    <p class="kicker">Coverage</p>
+                    <div class="progress"><span style="width: 100%;"></span></div>
+                  </div>
+                </div>
+
+                <div class="memory-row">
+                  <div class="memory-meta">
+                    <div class="avatar amber">RR</div>
+                    <div>
+                      <h3>Rules and references</h3>
+                      <p>Role-specific governance files that can evolve without losing auditability</p>
+                    </div>
+                  </div>
+                  <div class="badge-soft amber">2 need review</div>
+                </div>
+              </div>
+
+              <div class="health-chart">
+                <div class="card-header">
+                  <div>
+                    <p class="eyebrow">Trend</p>
+                    <h3 style="margin:0; font-size:18px; letter-spacing:-0.03em;">Retention health over the last 6 sync cycles</h3>
+                  </div>
+                  <div class="label"><span class="dot blue"></span>Memory evolution</div>
+                </div>
+
+                <div class="chart-line">
+                  <svg viewBox="0 0 620 156" preserveAspectRatio="none" aria-hidden="true">
+                    <path d="M0 121 C48 114, 88 96, 124 92 C160 88, 204 96, 248 82 C290 68, 332 46, 372 40 C416 34, 456 52, 500 38 C540 24, 584 12, 620 14" fill="none" stroke="#2f6df6" stroke-width="4" stroke-linecap="round"/>
+                    <path d="M0 126 C48 120, 88 102, 124 98 C160 94, 204 102, 248 88 C290 74, 332 52, 372 46 C416 40, 456 58, 500 44 C540 30, 584 18, 620 20 L620 156 L0 156 Z" fill="url(#areaGradient)"/>
+                    <defs>
+                      <linearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#2f6df6" stop-opacity="0.28"/>
+                        <stop offset="100%" stop-color="#2f6df6" stop-opacity="0"/>
+                      </linearGradient>
+                    </defs>
+                  </svg>
+                </div>
+                <div class="chart-labels">
+                  <div>Mon</div>
+                  <div>Tue</div>
+                  <div>Wed</div>
+                  <div>Thu</div>
+                  <div>Fri</div>
+                  <div>Sat</div>
+                </div>
+              </div>
+            </section>
+
+            <div class="stack">
+              <section class="card panel">
+                <div class="card-header">
+                  <div>
+                    <p class="eyebrow">Team management</p>
+                    <h2 class="card-title">Live worker grid</h2>
+                    <p class="card-subtitle">An operator-friendly view of role, queue depth, and sync freshness.</p>
+                  </div>
+                  <div class="badge-soft teal">Synced 12s ago</div>
+                </div>
+
+                <div class="worker-list">
+                  <div class="worker-row">
+                    <div class="worker-meta">
+                      <div class="avatar teal">PM</div>
+                      <div>
+                        <h3>profile-manager</h3>
+                        <p>Memory review, snapshot orchestration, and recovery readiness</p>
+                      </div>
+                    </div>
+                    <div class="worker-status">
+                      <div class="worker-tag"><span class="dot teal"></span>queue 1</div>
+                      <div class="label"><span class="dot teal"></span>Healthy</div>
+                    </div>
+                  </div>
+
+                  <div class="worker-row">
+                    <div class="worker-meta">
+                      <div class="avatar blue">OM</div>
+                      <div>
+                        <h3>ops-manager</h3>
+                        <p>Handoff approvals, registry polling, and cross-surface notifications</p>
+                      </div>
+                    </div>
+                    <div class="worker-status">
+                      <div class="worker-tag"><span class="dot blue"></span>queue 3</div>
+                      <div class="label"><span class="dot blue"></span>Live</div>
+                    </div>
+                  </div>
+
+                  <div class="worker-row">
+                    <div class="worker-meta">
+                      <div class="avatar amber">WA</div>
+                      <div>
+                        <h3>worker-a</h3>
+                        <p>Pending handoff approval before the next execution cycle</p>
+                      </div>
+                    </div>
+                    <div class="worker-status">
+                      <div class="worker-tag"><span class="dot amber"></span>queue 2</div>
+                      <div class="label"><span class="dot amber"></span>Needs review</div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <section class="card panel">
+                <div class="card-header">
+                  <div>
+                    <p class="eyebrow">Remote communication</p>
+                    <h2 class="card-title">Recent sync events</h2>
+                    <p class="card-subtitle">A compact timeline showing how controller decisions propagate to desktop and mobile surfaces.</p>
+                  </div>
+                </div>
+
+                <div class="activity-list">
+                  <div class="activity-row">
+                    <div class="activity-meta">
+                      <div class="avatar blue">MB</div>
+                      <div>
+                        <h3>Mobile review opened</h3>
+                        <p>Controller opened the latest memory panel from a phone and paused approvals remotely.</p>
+                      </div>
+                    </div>
+                    <div class="badge-soft blue">Synced</div>
+                  </div>
+
+                  <div class="activity-row">
+                    <div class="activity-meta">
+                      <div class="avatar teal">SN</div>
+                      <div>
+                        <h3>Snapshot pass completed</h3>
+                        <p>31 portable profiles refreshed and published to disk for recovery coverage.</p>
+                      </div>
+                    </div>
+                    <div class="badge-soft teal">Healthy</div>
+                  </div>
+
+                  <div class="activity-row">
+                    <div class="activity-meta">
+                      <div class="avatar rose">AL</div>
+                      <div>
+                        <h3>Memory drift detected</h3>
+                        <p>Two workers were queued for a refresh workflow before the next handoff approval window.</p>
+                      </div>
+                    </div>
+                    <div class="badge-soft rose">Action needed</div>
+                  </div>
+                </div>
+              </section>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

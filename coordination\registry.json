@@ -1,0 +1,101 @@
+{
+  "controller": {
+    "id": "controller",
+    "role": "controller",
+    "assistant_code": "A_controller",
+    "assistant_level": "A",
+    "display_name": "Controller",
+    "workspace": "./coordination",
+    "authority": [
+      "assign",
+      "verify",
+      "accept",
+      "reject",
+      "close"
+    ]
+  },
+  "workers": [
+    {
+      "id": "worker-demo-project",
+      "alias": "Demo Project Worker",
+      "assistant_code": "B_demo_project",
+      "assistant_level": "B",
+      "window_title": "Demo Project",
+      "project_root": "E:\\C_WORK\\A_AGTEC\\agent-control-plane-oss\\examples\\projects\\demo-project",
+      "agent_root": "E:\\C_WORK\\A_AGTEC\\agent-control-plane-oss\\examples\\projects\\demo-project\\_agent",
+      "status": "registered",
+      "contact_mode": [
+        "coordination_files",
+        "agent_window",
+        "background_exec"
+      ],
+      "background_worker": {
+        "enabled": true,
+        "mode": "ondemand",
+        "poll_seconds": 15,
+        "idle_exit_seconds": 120,
+        "autostart_on_task": true
+      },
+      "coordination_root": "E:\\C_WORK\\A_AGTEC\\agent-control-plane-oss\\coordination",
+      "scope": [
+        "Coordinate the demo project",
+        "Own project-level handoff and reporting"
+      ]
+    },
+    {
+      "id": "worker-profile-manager",
+      "alias": "Profile Manager",
+      "assistant_code": "B_profile_manager",
+      "assistant_level": "B",
+      "window_title": "Profile Manager",
+      "project_root": "E:\\C_WORK\\A_AGTEC\\agent-control-plane-oss\\examples\\local-workers",
+      "agent_root": "E:\\C_WORK\\A_AGTEC\\agent-control-plane-oss\\examples\\local-workers\\profile-manager",
+      "status": "registered",
+      "contact_mode": [
+        "coordination_files",
+        "background_exec",
+        "local_workspace"
+      ],
+      "background_worker": {
+        "enabled": true,
+        "mode": "daemon",
+        "poll_seconds": 15,
+        "idle_exit_seconds": 0,
+        "autostart_on_task": false
+      },
+      "coordination_root": "E:\\C_WORK\\A_AGTEC\\agent-control-plane-oss\\coordination",
+      "scope": [
+        "Maintain worker profile files",
+        "Maintain portable _agent_profile snapshots"
+      ]
+    },
+    {
+      "id": "worker-a",
+      "alias": "Worker A",
+      "assistant_code": "D_worker_a",
+      "assistant_level": "D",
+      "window_title": "Worker A",
+      "project_root": "E:\\C_WORK\\A_AGTEC\\agent-control-plane-oss\\examples\\projects\\demo-project\\_agent",
+      "agent_root": "E:\\C_WORK\\A_AGTEC\\agent-control-plane-oss\\examples\\projects\\demo-project\\_agent\\subagents\\worker-a",
+      "status": "registered",
+      "contact_mode": [
+        "coordination_files",
+        "agent_window",
+        "background_exec"
+      ],
+      "background_worker": {
+        "enabled": true,
+        "mode": "ondemand",
+        "poll_seconds": 15,
+        "idle_exit_seconds": 120,
+        "autostart_on_task": true
+      },
+      "coordination_root": "E:\\C_WORK\\A_AGTEC\\agent-control-plane-oss\\coordination",
+      "supervisor_worker_id": "worker-demo-project",
+      "supervisor_assistant_code": "B_demo_project",
+      "scope": [
+        "Handle bounded execution tasks inside the demo project"
+      ]
+    }
+  ]
+}

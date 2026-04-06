@@ -1,0 +1,196 @@
+Metadata-Version: 2.4
+Name: agent-control-plane
+Version: 0.1.0
+Summary: A file-based coordination layer for local AI workers and portable worker profiles.
+Author: Agent Control Plane contributors
+License: MIT
+Keywords: agents,ai,llm,coordination,workflow,operations
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Classifier: Programming Language :: Python :: 3.13
+Classifier: Topic :: Software Development :: Libraries :: Python Modules
+Classifier: Topic :: Software Development :: Build Tools
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Dynamic: license-file
+
+# Agent Control Plane
+
+The coordination layer for teams running multiple local AI agents.
+
+Prompts are not the hard part. The hard part is everything around them:
+
+- stable worker identity
+- clear handoffs
+- durable memory
+- audit-friendly task flow
+- recovery after context loss
+- moving workers across machines without rebuilding everything from scratch
+
+Agent Control Plane is a lightweight, file-based framework for solving those problems without adding another heavy backend.
+
+## What You Get
+
+- Worker body directories with explicit identity, memory, status, and communication files
+- A generated worker registry built from `worker-profile.json` files
+- Portable `_agent_profile` snapshots for migration, recovery, and audit
+- Project-level worker bodies plus subordinate workers
+- Plain-text coordination that is easy to diff, inspect, and automate
+
+## Who This Is For
+
+- teams running multiple coding agents locally
+- maintainers who want auditable, file-based agent operations
+- researchers and builders who need reproducible worker setups
+- anyone tired of losing coordination state inside chat history
+
+## Why This Project Exists
+
+Most multi-agent setups fail in boring ways:
+
+- a worker exists only as a chat tab
+- nobody knows which files define the worker
+- handoffs live in memory instead of durable records
+- migration means rebuilding prompts, context, and rules by hand
+
+This project treats worker operations like infrastructure:
+
+- identity is explicit
+- memory is stored in files
+- governance is inspectable
+- snapshots are portable
+
+## Quick Start
+
+### 1. Create an environment
+
+```powershell
+python -m venv .venv
+.venv\Scripts\python -m pip install -e .
+```
+
+### 2. Build the worker registry
+
+```powershell
+.venv\Scripts\agent-control-plane sync-registry `
+  --coord-root coordination `
+  --workers-root examples/local-workers `
+  --scan-root examples/projects
+```
+
+### 3. Generate portable worker profiles
+
+```powershell
+.venv\Scripts\agent-control-plane snapshot-profiles `
+  --coord-root coordination `
+  --workers-root examples/local-workers `
+  --scan-root examples/projects
+```
+
+### 4. Inspect the results
+
+- `coordination/registry.json` will contain the discovered workers
+- each example worker body will gain an `_agent_profile/` snapshot layer
+
+## Example Layout
+
+```text
+agent-control-plane-oss/
+  coordination/
+    registry.json
+    prompts/
+  examples/
+    local-workers/
+    projects/
+  src/
+    agent_control_plane/
+  templates/
+  tests/
+```
+
+Example worker body:
+
+```text
+worker-body/
+  worker-profile.json
+  status/
+    controller-link.md
+  memory/
+    session_memory.md
+  inbox/
+  outbox/
+  reports/
+  _agent_profile/
+```
+
+## Commands
+
+- `agent-control-plane sync-registry`
+  Discover workers and regenerate the shared registry
+
+- `agent-control-plane snapshot-profiles`
+  Build portable `_agent_profile` snapshots from worker body files
+
+## Design Principles
+
+- Files first
+  Coordination should survive chat resets and tool changes.
+
+- Lightweight bodies
+  Worker bodies should store governance material, not become project junk drawers.
+
+- Generated registries
+  Do not hand-edit worker registries when the source of truth is already the worker profile.
+
+- Portable snapshots
+  Recovery and migration should be routine, not heroic.
+
+## Generic Role Names
+
+The example workspace intentionally uses neutral role names:
+
+- `controller`
+- `profile-manager`
+- `ops-manager`
+- `worker-a`
+- `worker-b`
+
+You can swap these for your own naming scheme after cloning.
+
+## Documentation
+
+- [Architecture](./docs/architecture.md)
+- [Worker Profile](./docs/worker-profile.md)
+- [Governance Model](./docs/governance.md)
+- [Contributing](./CONTRIBUTING.md)
+- [Security Policy](./SECURITY.md)
+
+## Project Status
+
+`v0.1.0` is the first public scaffold release.
+
+It already includes:
+
+- a usable CLI
+- example worker bodies
+- registry generation
+- profile snapshot generation
+- tests and CI
+
+The next wave is likely to focus on:
+
+- richer validation
+- task/result file helpers
+- optional TUI or web views
+- stronger schema tooling
+
+## License
+
+MIT

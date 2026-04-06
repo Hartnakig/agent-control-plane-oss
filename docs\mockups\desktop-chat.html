@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Agent Control Plane Desktop Chat</title>
+  <link rel="stylesheet" href="./common.css">
+  <style>
+    .chat-layout {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 286px minmax(0, 1fr) 326px;
+      min-height: 702px;
+    }
+
+    .thread-list,
+    .context-panel {
+      padding: 22px 18px;
+      background: linear-gradient(180deg, rgba(247, 250, 255, 0.86), rgba(233, 239, 248, 0.96));
+    }
+
+    .thread-list {
+      border-right: 1px solid var(--line);
+    }
+
+    .context-panel {
+      border-left: 1px solid var(--line);
+    }
+
+    .mini-hero {
+      padding: 18px;
+      border-radius: 22px;
+      border: 1px solid rgba(255, 255, 255, 0.74);
+      background: rgba(255, 255, 255, 0.82);
+      box-shadow: 0 16px 30px rgba(17, 31, 56, 0.06);
+    }
+
+    .mini-hero h2 {
+      margin: 10px 0 0;
+      font-size: 20px;
+      line-height: 1.2;
+      letter-spacing: -0.04em;
+    }
+
+    .mini-hero p {
+      margin: 8px 0 0;
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--muted);
+    }
+
+    .search {
+      margin-top: 16px;
+      height: 48px;
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.82);
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .thread-stack,
+    .context-stack {
+      margin-top: 16px;
+      display: grid;
+      gap: 12px;
+    }
+
+    .thread-item {
+      padding: 15px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.74);
+    }
+
+    .thread-item.active {
+      background: linear-gradient(180deg, rgba(224, 241, 255, 0.98), rgba(255, 255, 255, 0.92));
+      box-shadow: 0 16px 28px rgba(47, 109, 246, 0.14);
+    }
+
+    .thread-item h3 {
+      margin: 8px 0 0;
+      font-size: 15px;
+      font-weight: 720;
+      letter-spacing: -0.02em;
+    }
+
+    .thread-item p {
+      margin: 6px 0 0;
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--muted);
+    }
+
+    .chat-main {
+      display: grid;
+      grid-template-rows: auto auto 1fr auto;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(242, 247, 253, 0.74));
+    }
+
+    .hero-strip {
+      padding: 22px 26px 0;
+    }
+
+    .hero-card {
+      padding: 20px 22px;
+      display: grid;
+      gap: 18px;
+      grid-template-columns: minmax(0, 1.3fr) minmax(220px, 0.8fr);
+    }
+
+    .hero-card h2 {
+      margin: 0;
+      font-size: 32px;
+      line-height: 1.06;
+      letter-spacing: -0.05em;
+    }
+
+    .hero-card p {
+      margin: 10px 0 0;
+      font-size: 14px;
+      line-height: 1.62;
+      color: var(--muted);
+    }
+
+    .hero-stats {
+      display: grid;
+      gap: 10px;
+      align-content: start;
+    }
+
+    .hero-stat {
+      min-height: 58px;
+      padding: 0 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid var(--line);
+      box-shadow: 0 10px 18px rgba(17, 31, 56, 0.04);
+    }
+
+    .hero-stat strong {
+      font-size: 22px;
+      letter-spacing: -0.04em;
+    }
+
+    .hero-stat span {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .chat-header {
+      padding: 18px 28px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .chat-title h3 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 720;
+      letter-spacing: -0.03em;
+    }
+
+    .chat-title p {
+      margin: 6px 0 0;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .chat-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-chip {
+      min-height: 30px;
+      padding: 0 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      background: rgba(47, 109, 246, 0.08);
+      color: var(--text);
+    }
+
+    .messages {
+      padding: 24px 28px;
+      display: grid;
+      gap: 18px;
+      align-content: start;
+    }
+
+    .bubble {
+      max-width: 80%;
+      padding: 18px;
+      border-radius: 24px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.84);
+      box-shadow: 0 12px 28px rgba(17, 31, 56, 0.07);
+    }
+
+    .bubble.operator {
+      justify-self: start;
+      border-top-left-radius: 10px;
+    }
+
+    .bubble.agent {
+      justify-self: end;
+      border-top-right-radius: 10px;
+      background: linear-gradient(180deg, rgba(220, 251, 245, 0.98), rgba(234, 244, 255, 0.96));
+    }
+
+    .bubble h3 {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 720;
+    }
+
+    .bubble p {
+      margin: 8px 0 0;
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--text);
+    }
+
+    .bubble ul {
+      margin: 10px 0 0 18px;
+      padding: 0;
+    }
+
+    .bubble li {
+      margin: 8px 0;
+      font-size: 14px;
+      line-height: 1.46;
+    }
+
+    .composer {
+      padding: 18px 28px 26px;
+      border-top: 1px solid var(--line);
+    }
+
+    .composer-box {
+      min-height: 88px;
+      padding: 18px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+      border-radius: 22px;
+      border: 1px solid rgba(255, 255, 255, 0.82);
+      background: rgba(255, 255, 255, 0.92);
+      box-shadow: 0 16px 28px rgba(17, 31, 56, 0.07);
+    }
+
+    .composer-text {
+      font-size: 15px;
+      line-height: 1.5;
+      color: var(--muted);
+    }
+
+    .context-card {
+      padding: 16px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.78);
+      box-shadow: 0 12px 22px rgba(17, 31, 56, 0.04);
+    }
+
+    .context-card h3 {
+      margin: 8px 0 0;
+      font-size: 16px;
+      font-weight: 720;
+      letter-spacing: -0.02em;
+    }
+
+    .context-card p,
+    .context-card li {
+      margin: 8px 0 0;
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--muted);
+    }
+
+    .context-card ul {
+      margin: 8px 0 0 18px;
+      padding: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <div class="app-shell">
+      <div class="topbar">
+        <div class="brand">
+          <div class="brand-badge">ACP</div>
+          <div>
+            <h1 class="brand-title">Desktop Operator Chat</h1>
+            <p class="brand-subtitle">Cross-device conversations grounded in worker files, queues, and memory state</p>
+          </div>
+        </div>
+        <div class="toolbar">
+          <div class="pill"><strong>2</strong> memory alerts</div>
+          <div class="pill"><strong>3</strong> paused approvals</div>
+          <button class="button-primary">Open memory panel</button>
+        </div>
+      </div>
+
+      <div class="chat-layout">
+        <aside class="thread-list">
+          <div class="mini-hero">
+            <div class="label"><span class="dot teal"></span>Remote-ready</div>
+            <h2>Desktop control thread</h2>
+            <p>Review workers, memory drift, and handoff decisions from a chat surface that stays tied to the same durable state as the dashboard.</p>
+          </div>
+
+          <div class="search">Search workers, memory files, or approvals...</div>
+
+          <div class="thread-stack">
+            <div class="thread-item active">
+              <div class="label"><span class="dot teal"></span>Active review</div>
+              <h3>profile-manager</h3>
+              <p>Two workers need memory refresh review before the next approval window opens.</p>
+            </div>
+            <div class="thread-item">
+              <div class="label"><span class="dot blue"></span>Sync state</div>
+              <h3>ops-manager</h3>
+              <p>Desktop and mobile control surfaces are receiving the latest queue updates.</p>
+            </div>
+            <div class="thread-item">
+              <div class="label"><span class="dot amber"></span>Pending task</div>
+              <h3>worker-a</h3>
+              <p>Waiting on a controller sign-off after snapshot and memory validation complete.</p>
+            </div>
+          </div>
+        </aside>
+
+        <section class="chat-main">
+          <div class="hero-strip">
+            <section class="card hero-card">
+              <div>
+                <p class="eyebrow">Conversation surface</p>
+                <h2>Chat with your agent team like an operator, not just a prompt author.</h2>
+                <p>Desktop chat is where live coordination, memory review, and approvals come together. The thread stays grounded in registry entries, evolving memory files, and portable snapshots.</p>
+              </div>
+              <div class="hero-stats">
+                <div class="hero-stat"><div><strong>12</strong></div><span>active workers</span></div>
+                <div class="hero-stat"><div><strong>31</strong></div><span>recovery profiles</span></div>
+                <div class="hero-stat"><div><strong>3</strong></div><span>remote surfaces synced</span></div>
+              </div>
+            </section>
+          </div>
+
+          <div class="chat-header">
+            <div class="chat-title">
+              <h3>Controller workspace</h3>
+              <p>One control thread for worker status, memory health, and remote approvals</p>
+            </div>
+            <div class="chat-header-actions">
+              <div class="header-chip"><span class="dot blue"></span>Desktop</div>
+              <div class="header-chip"><span class="dot teal"></span>Synced to mobile</div>
+            </div>
+          </div>
+
+          <div class="messages">
+            <div class="bubble operator">
+              <h3>Controller</h3>
+              <p>Give me a clean team snapshot. I want active workers, memory risk, and anything that blocks task execution across devices.</p>
+            </div>
+
+            <div class="bubble agent">
+              <h3>profile-manager</h3>
+              <p>The registry is healthy and 12 workers are online. Two workers need a memory refresh review before their next handoff cycle.</p>
+              <ul>
+                <li><strong>Team management:</strong> queue ownership is stable and every worker still resolves to a durable profile.</li>
+                <li><strong>Evolving memory:</strong> one stale `session_memory.md` item needs refresh, and one rule reference needs re-linking.</li>
+                <li><strong>Remote sync:</strong> the same alerts are already visible in the mobile control chat for on-the-go approval review.</li>
+              </ul>
+            </div>
+
+            <div class="bubble operator">
+              <h3>Controller</h3>
+              <p>Pause approvals, open the memory review panel, and mirror the update to mobile so I can confirm it remotely later.</p>
+            </div>
+
+            <div class="bubble agent">
+              <h3>ops-manager</h3>
+              <p>Queued. I paused three approvals, logged the decision into the coordination timeline, and pushed the same review state to the synced mobile surface.</p>
+            </div>
+          </div>
+
+          <div class="composer">
+            <div class="composer-box">
+              <div class="composer-text">Ask for worker status, memory deltas, snapshot coverage, or approve the next handoff...</div>
+              <button class="button-primary">Send message</button>
+            </div>
+          </div>
+        </section>
+
+        <aside class="context-panel">
+          <div class="context-stack">
+            <div class="context-card">
+              <div class="label"><span class="dot blue"></span>Team state</div>
+              <h3>Multi-agent management</h3>
+              <p>12 workers are live, 4 approvals are waiting, and all critical roles are still under the controller supervision graph.</p>
+            </div>
+
+            <div class="context-card">
+              <div class="label"><span class="dot teal"></span>Memory</div>
+              <h3>Evolvable memory model</h3>
+              <ul>
+                <li>`session_memory.md` for current context</li>
+                <li>`_agent_profile/` for snapshots and recovery</li>
+                <li>`worker-profile.json` for role and supervision metadata</li>
+              </ul>
+            </div>
+
+            <div class="context-card">
+              <div class="label"><span class="dot amber"></span>Devices</div>
+              <h3>Cross-device sync</h3>
+              <p>Desktop dashboard, desktop chat, and mobile chat are all reading from the same durable state, so remote review never loses context.</p>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
