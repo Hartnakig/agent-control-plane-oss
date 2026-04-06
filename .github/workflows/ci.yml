@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install package
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e .
+
+      - name: Run unit tests
+        run: python -m unittest discover -s tests -v
+
+      - name: Run registry sync smoke test
+        run: |
+          agent-control-plane sync-registry --coord-root coordination --workers-root examples/local-workers --scan-root examples/projects
+          agent-control-plane snapshot-profiles --coord-root coordination --workers-root examples/local-workers --scan-root examples/projects
+
+  windows-smoke:
+    runs-on: windows-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install package
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e .
+
+      - name: Run smoke checks
+        shell: pwsh
+        run: |
+          python -m unittest discover -s tests -v
+          agent-control-plane sync-registry --coord-root coordination --workers-root examples/local-workers --scan-root examples/projects
+          agent-control-plane snapshot-profiles --coord-root coordination --workers-root examples/local-workers --scan-root examples/projects
